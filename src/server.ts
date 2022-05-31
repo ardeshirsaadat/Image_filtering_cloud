@@ -1,6 +1,21 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import { Console } from 'console';
+
+
+// validate url function
+function isValidHttpUrl(url_string:string) {
+  let url;
+  
+  try {
+    url = new URL(url_string);
+  } catch (_) {
+    return false;  
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+}
 
 (async () => {
 
@@ -28,7 +43,26 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
 
   /**************************************************************************** */
-
+  app.get('/filteredimage',async (req,res)=>{
+    let {image_url} = req.query;
+    let bool = isValidHttpUrl(image_url)
+  
+    if (bool){
+      try{
+        console.log(image_url)
+      const filterd_image_file = await filterImageFromURL(image_url)
+ 
+      res.status(200).sendFile(filterd_image_file,()=>{
+        deleteLocalFiles([filterd_image_file])
+      })
+   
+      } catch(e){
+        res.status(500)
+      }
+    } else{
+    res.status(422).send({error:"query parameters",message:"url is malformed"})
+    }
+  })
   //! END @TODO1
   
   // Root Endpoint
