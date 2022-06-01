@@ -1,8 +1,7 @@
-import express from 'express';
+import express, { Request,Response } from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 import { Console } from 'console';
-
 
 // validate url function
 function isValidHttpUrl(url_string:string) {
@@ -29,7 +28,7 @@ function isValidHttpUrl(url_string:string) {
   app.use(bodyParser.json());
 
 
-  app.get('/filteredimage',async (req,res)=>{
+  app.get('/filteredimage',async (req:Request,res:Response)=>{
     let {image_url} = req.query;
     let bool = isValidHttpUrl(image_url)
   
